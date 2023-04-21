@@ -1,28 +1,113 @@
+<script>
+  let firstValue = 0;
+  let operatorValue = '';
+  let awaitingNextValue = false;
+  let displayValue = '0';
+
+  const calculate = {
+    '/': (firstNumber, secondNumber) => firstNumber / secondNumber,
+    '*': (firstNumber, secondNumber) => firstNumber * secondNumber,
+    '%': (firstNumber, secondNumber) => firstNumber % secondNumber,
+    '+': (firstNumber, secondNumber) => firstNumber + secondNumber,
+    '-': (firstNumber, secondNumber) => firstNumber - secondNumber,
+    '=': (firstNumber, secondNumber) => secondNumber,
+  };
+  
+  const sendNumberValue = (number) => {
+    if (awaitingNextValue) {
+      displayValue = number;
+      awaitingNextValue = false;
+    } else {
+      displayValue = displayValue === '0' ? number : displayValue + number;
+    }
+  };
+
+  const addDecimal = () => {
+    if (awaitingNextValue) return;
+    if (!displayValue.includes('.')) {
+      displayValue += '.';
+    }
+  };
+
+  const useOperator = (operator) => {
+    const currentValue = Number(displayValue);
+    if (operatorValue && awaitingNextValue) {
+      operatorValue = operator;
+      return;
+    }
+    if (!firstValue) {
+      firstValue = currentValue;
+    } else {
+      const calculation = calculate[operatorValue](firstValue, currentValue);
+      displayValue = calculation;
+      firstValue = calculation;
+    }
+    awaitingNextValue = true;
+    operatorValue = operator;
+  };
+
+  const clearRightmost = () => {
+    const newValue = Array.from(displayValue);
+    if (newValue.length > 1) {
+      newValue.pop();
+      displayValue = newValue.join("");
+    } else {
+      displayValue = "0";
+    }
+
+    if (awaitingNextValue) {
+      firstValue = Number(displayValue);
+    }
+  }
+
+  const swapSign = () => {
+    const newValue = Array.from(displayValue);
+
+    if (newValue.includes('-')) {
+      newValue.shift();
+      displayValue = newValue.join("");
+    } else {
+      newValue.unshift("-");
+      displayValue = newValue.join("");
+    }
+
+    if (awaitingNextValue) {
+      firstValue = Number(displayValue);
+    }
+  }
+
+  const resetAll = () => {
+    firstValue = 0;
+    operatorValue = '';
+    awaitingNextValue = false;
+    displayValue = '0';
+  };
+</script>
 
 <div class="calculator">
   <div class="calculator-display">
-    <h1>42</h1>
+    <h1>{displayValue}</h1>
   </div>
   <div class="calculator-buttons">
-    <button class="clear">AC</button>
-    <button class="swap">+/-</button>
-    <button value="%">%</button>
-    <button class="backspace orange">&#9003;</button>
-    <button value="7">7</button>
-    <button value="8">8</button>
-    <button value="9">9</button>
-    <button class="orange" value="/">÷</button>
-    <button value="4">4</button>
-    <button value="5">5</button>
-    <button value="6">6</button>
-    <button class="orange" value="*">×</button>
-    <button value="1">1</button>
-    <button value="2">2</button>
-    <button value="3">3</button>
-    <button class="orange" value="-">-</button>
-    <button value=".">,</button>
-    <button value="0">0</button>
-    <button value="=">=</button>
-    <button class="orange" value="+">+</button>
+    <button on:click={resetAll}>AC</button>
+    <button on:click={swapSign}>+/-</button>
+    <button on:click={() => useOperator('%')} class="operator" value="%">%</button>
+    <button on:click={clearRightmost} class="backspace orange">&#9003;</button>
+    <button on:click={() => sendNumberValue('7')} value="7">7</button>
+    <button on:click={() => sendNumberValue('8')}  value="8">8</button>
+    <button on:click={() => sendNumberValue('9')}  value="9">9</button>
+    <button on:click={() => useOperator('/')} class="orange operator" value="/">÷</button>
+    <button on:click={() => sendNumberValue('4')}  value="4">4</button>
+    <button on:click={() => sendNumberValue('5')} value="5">5</button>
+    <button on:click={() => sendNumberValue('6')} value="6">6</button>
+    <button on:click={() => useOperator('*')} class="orange operator" value="*">×</button>
+    <button on:click={() => sendNumberValue('1')} value="1">1</button>
+    <button on:click={() => sendNumberValue('2')}  value="2">2</button>
+    <button on:click={() => sendNumberValue('3')} value="3">3</button>
+    <button on:click={() => useOperator('-')} class="orange operator" value="-">-</button>
+    <button on:click={() => addDecimal()} class="decimal" value=".">,</button>
+    <button on:click={() => sendNumberValue('0')} value="0">0</button>
+    <button on:click={() => useOperator('=')} class="operator" value="=">=</button>
+    <button on:click={() => useOperator('+')} class="orange operator" value="+">+</button>
   </div>
 </div>
