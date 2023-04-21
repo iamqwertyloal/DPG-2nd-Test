@@ -4,14 +4,28 @@
   let awaitingNextValue = false;
   let displayValue = '0';
 
-  const calculate = {
-    '/': (firstNumber, secondNumber) => firstNumber / secondNumber,
-    '*': (firstNumber, secondNumber) => firstNumber * secondNumber,
-    '%': (firstNumber, secondNumber) => firstNumber % secondNumber,
-    '+': (firstNumber, secondNumber) => firstNumber + secondNumber,
-    '-': (firstNumber, secondNumber) => firstNumber - secondNumber,
-    '=': (firstNumber, secondNumber) => secondNumber,
-  };
+  function calculate (operator, firstNumber, secondNumber) {
+    switch (operator) {
+      case "/":
+        return firstNumber / secondNumber
+        break;
+      case "*":
+        return firstNumber * secondNumber
+        break;
+      case "%":
+        return firstNumber % secondNumber
+        break;
+      case "+":
+        return firstNumber + secondNumber
+        break;
+      case "-":
+        return firstNumber - secondNumber
+        break;
+      case "=":
+        return secondNumber
+        break;
+    }
+  }
   
   const sendNumberValue = (number) => {
     if (awaitingNextValue) {
@@ -23,9 +37,12 @@
   };
 
   const addDecimal = () => {
-    if (awaitingNextValue) return;
+    if (typeof(displayValue) === "number") {
+      displayValue = displayValue.toString();
+    }
     if (!displayValue.includes('.')) {
       displayValue += '.';
+      awaitingNextValue = false;
     }
   };
 
@@ -38,7 +55,7 @@
     if (!firstValue) {
       firstValue = currentValue;
     } else {
-      const calculation = calculate[operatorValue](firstValue, currentValue);
+      const calculation = calculate(operatorValue, firstValue, currentValue);
       displayValue = calculation;
       firstValue = calculation;
     }
@@ -47,32 +64,33 @@
   };
 
   const clearRightmost = () => {
-    const newValue = Array.from(displayValue);
+    const newValue = Array.from(String(displayValue));
     if (newValue.length > 1) {
       newValue.pop();
       displayValue = newValue.join("");
+      firstValue = Number(displayValue)
     } else {
       displayValue = "0";
-    }
-
-    if (awaitingNextValue) {
-      firstValue = Number(displayValue);
+      firstValue = 0;
     }
   }
 
   const swapSign = () => {
-    const newValue = Array.from(displayValue);
+    if (typeof(displayValue) === "number") {
+      displayValue = -(displayValue);
+      firstValue = displayValue;
+      displayValue.toString();
+      return
+    }
 
-    if (newValue.includes('-')) {
+    const newValue = Array.from(String(displayValue));
+
+    if (displayValue.includes('-')) {
       newValue.shift();
       displayValue = newValue.join("");
     } else {
       newValue.unshift("-");
       displayValue = newValue.join("");
-    }
-
-    if (awaitingNextValue) {
-      firstValue = Number(displayValue);
     }
   }
 

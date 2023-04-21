@@ -49,7 +49,7 @@ body {
   padding: 10px; }
   .calculator-buttons button {
     min-height: 50px;
-    width: 50px;
+    min-width: 50px;
     font-size: 2.5rem;
     font-weight: 100;
     color: #afafaf;
@@ -76,4 +76,13 @@ body {
 /* Media Query: Large Smartphone (Vertical) */
 @media screen and (max-width: 600px) {
   .calculator {
-    width: 95%; } }
+    width: 95%;
+    height: 350px; }
+    .calculator button {
+      min-height: 35px;
+      min-width: 35px;
+      font-size: 1.5rem; }
+      .calculator button.orange {
+        font-size: 2.5rem; }
+        .calculator button.orange.backspace {
+          font-size: 2rem; } }
